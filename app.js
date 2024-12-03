@@ -1,11 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
+import authRouter from "./routes/auth.routes.js";
 
 const app = express();
 const PORT = 3000;
 
 // middleware
 app.use(express.static("public"));
+app.use(authRouter);
 
 // view engine
 app.set("view engine", "ejs");
