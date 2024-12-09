@@ -1,20 +1,28 @@
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth.routes.js";
+import { config } from "dotenv";
+import {
+  setSession,
+  resetCookieMaxAge,
+} from "./middlewares/session.middleware.js";
 
 const app = express();
 const PORT = 3000;
+config();
 
-// middleware
+// middlewares
 app.use(express.static("public"));
 app.use(express.json());
+app.use(setSession);
+app.use(resetCookieMaxAge);
 app.use(authRouter);
 
 // view engine
 app.set("view engine", "ejs");
 
 // database connection
-const dbURI = "mongodb://localhost:27017/node-jwt-auth";
+const dbURI = process.env.MONGO_URI;
 mongoose
   .connect(dbURI)
   .then((result) => app.listen(PORT, console.log(`Listening on port ${PORT}`)))

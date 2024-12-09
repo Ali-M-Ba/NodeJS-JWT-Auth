@@ -1,4 +1,4 @@
-// routes/auth.router.js
+// routes/auth.routers.js
 import { Router } from "express";
 import {
   showSignupForm,

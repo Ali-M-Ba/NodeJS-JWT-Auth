@@ -1,3 +1,4 @@
+// models/User.model.js
 import { Schema, model } from "mongoose";
 import pkg from "validator"; // Import the default CommonJS export
 import bcrypt from "bcrypt";
