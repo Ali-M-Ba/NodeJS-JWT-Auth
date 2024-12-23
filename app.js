@@ -13,6 +13,7 @@ config();
 
 // middlewares
 app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(setSession);
 app.use(resetCookieMaxAge);

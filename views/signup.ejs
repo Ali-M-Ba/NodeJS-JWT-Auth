@@ -1,6 +1,6 @@
 <%- include('partials/header'); -%>
 
-<form action="POST">
+<form method="post" action="/signup">
   <h2>sign Up</h2>
   <label for="email">email</label>
   <input type="email" name="email" id="email" />
@@ -10,5 +10,53 @@
   <div class="password error"></div>
   <button type="submit">Sign Up</button>
 </form>
+
+<script>
+const form = document.querySelector("form");
+
+// Function to display errors in the corresponding divs
+const displayErrors = (errors) => {
+  // Clear previous error messages
+  document.querySelector(".email.error").textContent = "";
+  document.querySelector(".password.error").textContent = "";
+
+  // Loop through errors' messages and populate the relevant error divs
+  errors.forEach((err) => {
+    if (err.toLowerCase().includes("email")) {
+      document.querySelector(".email.error").textContent = err;
+    } else if (err.toLowerCase().includes("password")) {
+      document.querySelector(".password.error").textContent = err;
+    }
+  });
+};
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = event.target.email.value;
+  const password = event.target.password.value;
+
+  try {
+    const res = await fetch("/signup", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // Display errors if the response is not OK
+      displayErrors(data.errors || [data.message]);
+    } else {
+      console.log("Signup successful!");
+      window.location.href = "/";
+    }
+  } catch (error) {
+    console.error("Something went wrong:", error);
+  }
+});
+
+</script>
 
 <%- include('partials/footer'); -%>

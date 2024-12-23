@@ -4,8 +4,8 @@ import MongoStore from "connect-mongo";
 import { config } from "dotenv";
 
 config();
-
 const isProduction = process.env.NODE_ENV === "production";
+const maxAge = 14 * 24 * 60 * 60; // 14 days in seconds
 
 export const setSession = session({
   secret: process.env.SESSION_SECRET,
@@ -17,7 +17,7 @@ export const setSession = session({
   resave: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI, // MongoDB connection string
-    ttl: 14 * 24 * 60 * 60, // Time-to-live: 14 days
+    ttl: maxAge, // Time-to-live: 14 days
     autoRemove: "native", // Let MongoDB handle expired session cleanup
   }).on("error", (err) => {
     console.error("Session store error:", err);
@@ -25,14 +25,14 @@ export const setSession = session({
   cookie: {
     httpOnly: isProduction, // Helps prevent XSS attacks by disallowing JavaScript access
     secure: isProduction, // Ensures cookies are sent over HTTPS in production
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: maxAge * 1000, // 14 days
     sameSite: isProduction ? "strict" : "lax", // Strict for production, Lax for development
   },
 });
 
 export const resetCookieMaxAge = (req, res, next) => {
   if (req.session) {
-    req.session.cookie.maxAge = 7 * 24 * 60 * 60 * 1000; // Reset the session epire 7 days
+    req.session.cookie.maxAge = maxAge * 1000; // Reset the session epire 14 days
   }
   next();
 };
