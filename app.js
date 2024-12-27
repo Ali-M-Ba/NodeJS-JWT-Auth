@@ -6,6 +6,8 @@ import {
   setSession,
   resetCookieMaxAge,
 } from "./middlewares/session.middleware.js";
+import { isAuth, attachUser } from "./middlewares/auth.middleware.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = 3000;
@@ -14,6 +16,7 @@ config();
 // middlewares
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
 app.use(setSession);
 app.use(resetCookieMaxAge);
@@ -30,5 +33,6 @@ mongoose
   .catch((err) => console.log(err));
 
 // routes
+app.get("*", attachUser);
 app.get("/", (req, res) => res.render("home"));
-app.get("/smoothies", (req, res) => res.render("smoothies"));
+app.get("/smoothies", isAuth, (req, res) => res.render("smoothies"));

@@ -31,6 +31,21 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Static method to Log in
+userSchema.statics.login = async function (email, password) {
+  const existingUser = await this.findOne({ email });
+  if (!existingUser) {
+    throw new Error("Invalid email or password");
+  }
+
+  const isMatch = await bcrypt.compare(password, existingUser.password);
+  if (!isMatch) {
+    throw new Error("Invalid email or password");
+  }
+
+  return existingUser;
+};
+
 const User = model("user", userSchema);
 
 export default User;

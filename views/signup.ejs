@@ -13,19 +13,21 @@
 
 <script>
 const form = document.querySelector("form");
+const emailError = document.querySelector(".email.error");
+const passwordError = document.querySelector(".password.error");
 
 // Function to display errors in the corresponding divs
 const displayErrors = (errors) => {
   // Clear previous error messages
-  document.querySelector(".email.error").textContent = "";
-  document.querySelector(".password.error").textContent = "";
+  emailError.textContent = "";
+  passwordError.textContent = "";
 
   // Loop through errors' messages and populate the relevant error divs
   errors.forEach((err) => {
     if (err.toLowerCase().includes("email")) {
-      document.querySelector(".email.error").textContent = err;
+      emailError.textContent = err;
     } else if (err.toLowerCase().includes("password")) {
-      document.querySelector(".password.error").textContent = err;
+      passwordError.textContent = err;
     }
   });
 };
@@ -50,7 +52,7 @@ form.addEventListener("submit", async (event) => {
       displayErrors(data.errors || [data.message]);
     } else {
       console.log("Signup successful!");
-      window.location.href = "/";
+      window.location.href = "/login";
     }
   } catch (error) {
     console.error("Something went wrong:", error);

@@ -52,6 +52,12 @@ const handleErrors = (error) => {
     );
   }
 
+  if (error.message === "Invalid email or password") {
+    errRes.status = 401; // Unauthorized
+    errRes.message = error.message;
+    errRes.errors.push(error.message);
+  }
+
   return errRes;
 };
 
@@ -81,7 +87,7 @@ export const processSignup = async (req, res) => {
       sameSite: isProduction ? "strict" : "lax",
     });
 
-    res.status(201).json({ success: true, savedUser });
+    res.status(201).json({ success: true, message: "Signed up successfully" });
   } catch (error) {
     console.error("Error occurred while signing up: ", error);
     const err = handleErrors(error);
@@ -95,7 +101,32 @@ export const showLoginForm = (req, res) => {
   res.render("login");
 };
 
-export const processLogin = (req, res) => {
-  const userData = req.body;
-  res.send(userData);
+export const processLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.login(email, password);
+
+    const token = createToken(user._id);
+    // Store the token in the cookie
+    res.cookie("token", token, {
+      httpOnly: isProduction,
+      secure: isProduction,
+      maxAge: maxAge * 1000, // 14 days in milliseconds
+      sameSite: isProduction ? "strict" : "lax",
+    });
+
+    res.status(200).json({ success: true, message: "Logged in successfully" });
+  } catch (error) {
+    console.error("Error occurred while loging in: ", error);
+    const err = handleErrors(error);
+    res
+      .status(err.status)
+      .json({ success: false, message: err.message, errors: err.errors || [] });
+  }
+};
+
+export const processLogout = (req, res) => {
+  res.cookie("token", "", { maxAge: 1 });
+  res.redirect("/");
 };

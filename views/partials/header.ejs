@@ -9,4 +9,13 @@
   <body>
     <nav>
       <h1><a href="/">Ninja Smoothies</a></h1>
+      <ul>
+        <% if (locals.user) { %>
+          <li>Welcome, <%= user %></li>
+          <li><a class="btn" href="/logout">Log out</a></li>
+        <% } else { %>
+          <li><a href="/login">Log in</a></li>
+          <li><a class="btn" href="/signup">Sign up</a></li>
+        <% } %>
+      </ul>
     </nav>
