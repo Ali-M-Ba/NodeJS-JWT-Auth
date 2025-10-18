@@ -41,8 +41,13 @@
     try {
       const res = await fetch("/login", {
         method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        },
       });
 
       const data = await res.json();
@@ -52,7 +57,7 @@
         displayErrors(data.errors || [data.message]);
       } else {
         console.log("Login successful!");
-        window.location.href = "/";
+        window.location.href = "/smoothies";
       }
     } catch (error) {
       console.error("Something went wrong:", error);

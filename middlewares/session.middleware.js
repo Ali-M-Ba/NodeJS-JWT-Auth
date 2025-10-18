@@ -2,8 +2,8 @@
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { config } from "dotenv";
-
 config();
+
 const isProduction = process.env.NODE_ENV === "production";
 const maxAge = 14 * 24 * 60 * 60; // 14 days in seconds
 

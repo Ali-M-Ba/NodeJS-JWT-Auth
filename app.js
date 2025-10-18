@@ -6,12 +6,12 @@ import {
   setSession,
   resetCookieMaxAge,
 } from "./middlewares/session.middleware.js";
-import { isAuth, attachUser } from "./middlewares/auth.middleware.js";
+import { isAuth } from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
 
-const app = express();
-const PORT = 3000;
 config();
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // middlewares
 app.use(express.static("public"));
@@ -26,13 +26,11 @@ app.use(authRouter);
 app.set("view engine", "ejs");
 
 // database connection
-const dbURI = process.env.MONGO_URI;
 mongoose
-  .connect(dbURI)
+  .connect("mongodb://localhost:27017/JWT-Auth")
   .then((result) => app.listen(PORT, console.log(`Listening on port ${PORT}`)))
   .catch((err) => console.log(err));
 
 // routes
-app.get("*", attachUser);
 app.get("/", (req, res) => res.render("home"));
 app.get("/smoothies", isAuth, (req, res) => res.render("smoothies"));
