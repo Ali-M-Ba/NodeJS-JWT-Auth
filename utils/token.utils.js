@@ -1,15 +1,21 @@
 import jwt from "jsonwebtoken";
 
-export const createToken = (dataObj) => {
-  return jwt.sign(dataObj, process.env.TOKEN_SECRET, {
+export const createToken = (payload) => {
+  return jwt.sign(payload, process.env.TOKEN_SECRET, {
     expiresIn: process.env.TOKEN_MAX_AGE,
   });
 };
 
 // Utility function to verify JWT tokens
-export const verifyToken = async (token) => {
+export const verifyToken = (token) => {
   try {
-    const decoded = await jwt.verify(token, process.env.TOKEN_SECRET);
+    if (!token) {
+      throw {
+        status: 401,
+        message: "No authentication token provided.",
+      }
+    }
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
     return decoded;
   } catch (error) {
     throw error;
