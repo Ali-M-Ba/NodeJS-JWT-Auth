@@ -38,13 +38,7 @@ export const VERIFY_ACCOUNT_TEMPLATE = `
                   <h1 style="margin:0 0 8px;font-size:22px;color:#111;">Verify your account</h1>
                   <p style="margin:0 0 16px;color:#111;line-height:1.4;">Hi {{userName}},<br>Please confirm your email <strong>{{email}}</strong> to activate your account.</p>
 
-                  <table style="margin:14px 0 18px;">
-                    <tr><td align="center">
-                      <a href="{{link}}" style="padding:12px 22px;border:4px solid #111;background:#00d1ff;color:#111;font-weight:700;border-radius:6px;text-decoration:none;box-shadow:8px 8px 0 rgba(0,0,0,0.06);">Confirm Email</a>
-                    </td></tr>
-                  </table>
-
-                  <p style="margin:0 0 12px;color:#111;">Or enter this one-time code (OTP):</p>
+                  <p style="margin:0 0 12px;color:#111;">Enter this one-time code (OTP):</p>
                   <div class="otp-box" style="padding:22px 28px;font-size:28px;font-weight:800;letter-spacing:4px;background:#fff;border:6px solid #111;border-radius:8px;display:inline-block;box-shadow:12px 12px 0 rgba(0,0,0,0.06);">{{otp}}</div>
 
                   <p style="margin:18px 0 0;color:#111;font-size:13px;line-height:1.4;">This code expires in 5 minutes. If this wasn't you, ignore this email or contact <a href="mailto:{{support_email}}" style="font-weight:700;color:#111;">{{support_email}}</a>.</p>
@@ -113,16 +107,13 @@ export const RESET_PASSWORD_TEMPLATE = `
                 <td style="padding:18px;background:#fffbe6;border:8px solid #111;">
 
                   <h2 style="margin:0 0 8px;font-size:20px;color:#111;">Reset your password</h2>
-                  <p style="margin:0 0 12px;color:#111;line-height:1.4;">We received a request to reset the password for <strong>{{email}}</strong>. You can reset it using the button below or use the OTP code.</p>
+                  <p style="margin:0 0 12px;color:#111;line-height:1.4;">We received a request to reset the password for <strong>{{email}}</strong>. You can reset it using the button below.</p>
 
                   <table style="margin:12px 0 16px;">
                     <tr><td align="center">
                       <a href="{{link}}" style="padding:12px 22px;border:4px solid #111;background:#ff6b6b;color:#111;font-weight:800;border-radius:6px;text-decoration:none;box-shadow:10px 10px 0 rgba(0,0,0,0.06);">Reset Password</a>
                     </td></tr>
                   </table>
-
-                  <p style="margin:0 0 12px;color:#111;">Or use this OTP:</p>
-                  <div class="otp-box" style="padding:22px 28px;font-size:28px;font-weight:800;letter-spacing:4px;background:#fff;border:6px solid #111;border-radius:8px;display:inline-block;box-shadow:12px 12px 0 rgba(0,0,0,0.06);">{{otp}}</div>
 
                   <p style="margin:18px 0 0;color:#111;font-size:13px;line-height:1.4;">If you didn't request this, ignore the email or contact <a href="mailto:{{support_email}}" style="font-weight:700;color:#111;">{{support_email}}</a>.</p>
 

@@ -30,10 +30,10 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  resetPasswordOtp: {
+  resetPasswordToken: {
     type: String,
   },
-  resetPasswordOtpExpiredAt: {
+  resetPasswordTokenExpiredAt: {
     type: Date,
   },
 });
@@ -52,9 +52,6 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("verifyOtp") && this.verifyOtp) {
     this.verifyOtp = await bcrypt.hash(this.verifyOtp, 10);
   }
-  if (this.isModified("resetPasswordOtp") && this.resetPasswordOtp) {
-    this.resetPasswordOtp = await bcrypt.hash(this.resetPasswordOtp, 10);
-  }
   next();
 });
 
@@ -66,11 +63,10 @@ userSchema.methods.isVerifyOtpValid = async function (otp) {
   return isValidTime && isMatch;
 };
 
-userSchema.methods.isResetOtpValid = async function (otp) {
-  if (!this.resetPasswordOtp || !this.resetPasswordOtpExpiredAt) return false;
-  const isValidTime = new Date() < this.resetPasswordOtpExpiredAt;
-  const isMatch = await bcrypt.compare(otp, this.resetPasswordOtp);
-  return isValidTime && isMatch;
+userSchema.methods.isResetTokenValid = async function () {
+  if (!this.resetPasswordTokenExpiredAt) return false;
+  const isValidTime = new Date() < this.resetPasswordTokenExpiredAt;
+  return isValidTime;
 };
 
 const User = model("user", userSchema);

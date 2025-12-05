@@ -101,9 +101,9 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const resetPassword = async (data) => {
+  const resetPassword = async (data, token) => {
     try {
-      return await userApi.resetPassword(data);
+      return await userApi.resetPassword(data, token);
     } catch (error) {
       console.error("Error resetting password: ", error);
       return error;

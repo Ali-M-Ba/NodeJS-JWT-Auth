@@ -10,7 +10,8 @@ const userApi = {
     axiosClient.post("/api/auth/verify-account/confirm", otp),
   requestPasswordReset: (data) =>
     axiosClient.post("/api/auth/forgot-password", data),
-  resetPassword: (data) => axiosClient.post("/api/auth/reset-password", data),
+  resetPassword: (data, token) =>
+    axiosClient.post(`/api/auth/reset-password/${token}`, data),
 };
 
 export default userApi;

@@ -125,7 +125,9 @@ export const sendVerifyOtp = async (req, res) => {
       to: user.email,
       subject: "Account verification OTP",
       // text: `Your OTP is ${otp}. Verify your account using this OTP`,
-      html: VERIFY_ACCOUNT_TEMPLATE.replace("{{otp}}",  otp).replace("{{userName}}", user.name).replace("{{email}}", user.email)
+      html: VERIFY_ACCOUNT_TEMPLATE.replace("{{otp}}", otp)
+        .replace("{{userName}}", user.name)
+        .replace("{{email}}", user.email),
     };
 
     await transport.sendMail(mailOptions);
@@ -194,24 +196,31 @@ export const requestPasswordReset = async (req, res) => {
         };
       }
 
-      const otp = Math.floor(100000 + Math.random() * 900000);
+      const resetPasswordToken = crypto.randomUUID();
 
-      user.resetPasswordOtp = otp;
-      user.resetPasswordOtpExpiredAt = new Date(Date.now() + 5 * 60 * 1000); // expires in 5 minutes
+      user.resetPasswordToken = resetPasswordToken;
+      user.resetPasswordTokenExpiredAt = new Date(Date.now() + 5 * 60 * 1000); // expires in 5 minutes
+
+      const link = `${process.env.CLIENT_URL}reset-password/${resetPasswordToken}`;
 
       user.save();
 
       const mailOptions = {
         from: process.env.SENDER_EMAIL,
         to: email,
-        subject: "Paaword resetting OTP",
-        // text: `Your reset OTP: ${otp}.`,
-        html: RESET_PASSWORD_TEMPLATE.replace("{{otp}}",  otp).replace("{{userName}}", user.name).replace("{{email}}", user.email)
+        subject: "Paaword Resetting",
+        html: RESET_PASSWORD_TEMPLATE.replace("{{link}}", link)
+          .replace("{{userName}}", user.name)
+          .replace("{{email}}", user.email),
       };
 
       await transport.sendMail(mailOptions);
 
-      handleSuccessRes(res, 200, "OTP sent on Email successfully.");
+      handleSuccessRes(
+        res,
+        200,
+        "Pasword reset link sent on Email successfully."
+      );
     } catch (error) {
       console.error(error);
       handleFailedRes(res, error);
@@ -220,22 +229,22 @@ export const requestPasswordReset = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { email, otp, newPassword } = req.body;
+  const { newPassword } = req.body;
+  const { token } = req.params;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ resetPasswordToken: token });
+    if (!user) throw { status: 404, message: "Invalid token." };
 
-    if (!user) throw { status: 404, message: "User not found." };
-
-    if (await user.isResetOtpValid(String(otp))) {
+    if (await user.isResetTokenValid()) {
       user.password = newPassword;
-      user.resetPasswordOtp = null;
-      user.resetPasswordOtpExpiredAt = null;
+      user.resetPasswordToken = null;
+      user.resetPasswordTokenExpiredAt = null;
       await user.save();
     } else {
       throw {
         status: 400,
-        message: "Invalid or expired OTP",
+        message: "Expired token.",
       };
     }
 

@@ -1,13 +1,13 @@
-import ResetPasswordForm from "../components/ResetPasswordForm";
+import ForgotPasswordForm from "../components/ForgotPasswordForm";
 import Navbar from "../components/Navbar";
 
-const ResetPassword = () => {
+const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-green-300">
       <Navbar />
-      <ResetPasswordForm />
+      <ForgotPasswordForm />
     </div>
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;

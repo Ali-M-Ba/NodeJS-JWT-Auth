@@ -102,8 +102,8 @@ export const LoginSignupForm = () => {
 
         {formMode === "Log in" && (
           <p
-            className="text-blue-600 cursor-pointer hover:underline"
-            onClick={() => navigate("/reset-password")}
+            className="text-blue-600 w-fit cursor-pointer hover:underline"
+            onClick={() => navigate("/forgot-password")}
           >
             Forget password?
           </p>

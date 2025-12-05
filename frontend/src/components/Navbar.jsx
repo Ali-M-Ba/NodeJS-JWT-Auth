@@ -1,4 +1,3 @@
-import userApi from "../api/userApi";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AppContext";
@@ -18,7 +17,11 @@ const Navbar = () => {
 
   return (
     <div className="w-full flex justify-between items-center bg-white border-b-4 p-4 sm:p-6 sm:px-32 absolute top-0">
-      <img src={assets.logo} className="w-28 s:w-32" />
+      <img
+        onClick={() => navigate("/")}
+        src={assets.logo}
+        className="cursor-pointer w-28 s:w-32"
+      />
       {user ? (
         <div className="relative group flex items-center justify-center bg-green-500 border-3 w-12 h-12 rounded-full font-bold shadow-[2px_2px_0_#000]">
           {user?.userName[0].toUpperCase()}
