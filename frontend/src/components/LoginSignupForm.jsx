@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AppContext";
+import { BeatLoader } from "react-spinners";
 
 export const LoginSignupForm = () => {
   const [formMode, setFormMode] = useState("Log in");
   const [user, setUser] = useState({ name: "", email: "", password: "" });
   const navigate = useNavigate();
   const { isAuthenticated, login, signup } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,17 +20,21 @@ export const LoginSignupForm = () => {
   };
 
   const submitForm = async (e) => {
+    e.preventDefault();
+
     try {
-      e.preventDefault();
+      setLoading(true);
 
       const { success, message } =
         formMode === "Sign up" ? await signup(user) : await login(user);
 
       success ? toast.success(message) : toast.error(message);
-      success && navigate("/");
+      if (success) navigate("/");
     } catch (error) {
       console.error("An error ocuurred while submitting the form: ", error);
       toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,12 +114,17 @@ export const LoginSignupForm = () => {
             Forget password?
           </p>
         )}
-
         <button
           type="submit"
           className="mt-4 bg-purple-500 border-2 shadow-[4px_4px_0_#000] px-4 py-2 font-bold hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#000] transition-transform"
         >
-          {formMode === "Sign up" ? "Sign up" : "Log in"}
+          {loading ? (
+            <BeatLoader color="#63002b" size={10} />
+          ) : formMode === "Sign up" ? (
+            "Sign up"
+          ) : (
+            "Log in"
+          )}
         </button>
         <p className="text-center text-sm font-bold text-gray-500 mt-2 tracking-wide">
           {formMode === "Sign up"

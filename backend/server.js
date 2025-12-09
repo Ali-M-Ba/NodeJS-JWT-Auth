@@ -7,7 +7,6 @@ import {
   setSession,
   resetCookieMaxAge,
 } from "./middlewares/session.middleware.js";
-import { isAuth } from "./middlewares/auth.middleware.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -28,10 +27,6 @@ app.use(express.json());
 app.use(setSession);
 app.use(resetCookieMaxAge);
 app.use("/api/auth", authRouter);
-
-// routes
-app.get("/", (req, res) => res.render("home"));
-app.get("/smoothies", isAuth, (req, res) => res.render("smoothies"));
 
 // database connection
 mongoose

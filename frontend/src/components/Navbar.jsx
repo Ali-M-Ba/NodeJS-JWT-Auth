@@ -2,17 +2,31 @@ import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AppContext";
 import { toast } from "react-toastify";
+import { BeatLoader } from "react-spinners";
+import { useState } from "react";
 
 const Navbar = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { user, logout, sendVerifyOtp } = useAuth();
 
   const handleAccountVerification = async () => {
-    const { success, message } = await sendVerifyOtp();
+    try {
+      setLoading(true);
 
-    success
-      ? toast.success(message) && navigate("/verify-email")
-      : toast.error(message);
+      const { success, message } = await sendVerifyOtp();
+      if (success) {
+        toast.success(message);
+        navigate("/verify-email");
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.error("An error ocuurred requesting account verification: ", error);
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,14 +41,19 @@ const Navbar = () => {
           {user?.userName[0].toUpperCase()}
           <div className="absolute hidden group-hover:block top-0 right-0 z-10 pt-12">
             <ul className="list-none cursor-pointer m-0 bg-white w-max border-4 border-black shadow-[4px_4px_0_#000]">
-              {!user.isVerified && (
-                <li
-                  onClick={handleAccountVerification}
-                  className="p-3 pr-10 bg-yellow-300 border-b-4 border-black font-bold hover:bg-yellow-200 transition"
-                >
-                  Verify Email
-                </li>
-              )}
+              {!user.isVerified &&
+                (loading ? (
+                  <li className="flex items-center justify-center py-4 px-13 bg-yellow-300 border-b-4 border-black font-bold hover:bg-yellow-200 transition">
+                    <BeatLoader color="#146300" size={10} />
+                  </li>
+                ) : (
+                  <li
+                    onClick={handleAccountVerification}
+                    className="p-3 pr-10 bg-yellow-300 border-b-4 border-black font-bold hover:bg-yellow-200 transition"
+                  >
+                    Verify Email
+                  </li>
+                ))}
 
               <li
                 onClick={logout}

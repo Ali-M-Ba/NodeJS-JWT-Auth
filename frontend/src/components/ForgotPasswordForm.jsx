@@ -2,22 +2,29 @@ import { useState } from "react";
 import { useAuth } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+import { BeatLoader } from "react-spinners";
 
 const ForgotPasswordForm = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const { requestPasswordReset } = useAuth();
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    try {
+      setLoading(true);
+      const { success, message } = await requestPasswordReset({ email });
 
-    const { success, message } = await requestPasswordReset({ email });
-
-    if (success) {
-      toast.success(message);
-      navigate("/login");
-    } else {
-      toast.error(message);
+      if (success) {
+        toast.success(message);
+        navigate("/login");
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,7 +69,11 @@ const ForgotPasswordForm = () => {
           type="submit"
           className="my-2 mt-4 bg-orange-400 border-2 shadow-[4px_4px_0_#000] px-4 py-2 font-bold hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#000] transition-transform"
         >
-          Reset Password
+          {loading ? (
+            <BeatLoader color="#633e00" size={10} />
+          ) : (
+            "Reset Password"
+          )}
         </button>
       </form>
       <Link

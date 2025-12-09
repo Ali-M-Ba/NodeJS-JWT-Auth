@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AppContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { BeatLoader } from "react-spinners";
 
 const VerifyEmailForm = () => {
+  const [loading, setLoading] = useState(false);
   const inputsRef = React.useRef([]);
   const { user, verifyAccount } = useAuth();
   const navigate = useNavigate();
@@ -49,12 +51,24 @@ const VerifyEmailForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const otp = inputsRef.current.map((ref) => ref.value).join("");
+    try {
+      const otp = inputsRef.current.map((ref) => ref.value).join("");
 
-    const { success, message } = await verifyAccount({ otp });
-    success
-      ? toast.success(message) && (user.isVerified = true) && navigate("/")
-      : toast.error(message);
+      setLoading(true);
+      const { success, message } = await verifyAccount({ otp });
+      if (success) {
+        toast.success(message);
+        user.isVerified = true;
+        navigate("/");
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.error("An error ocuurred while submitting the form: ", error);
+      toast.error(error?.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -91,7 +105,11 @@ const VerifyEmailForm = () => {
           type="submit"
           className="mt-4 bg-green-500 border-2 shadow-[4px_4px_0_#000] px-4 py-2 font-bold hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#000] transition-transform"
         >
-          Verify Account
+          {loading ? (
+            <BeatLoader color="#146300" size={10} />
+          ) : (
+            "Verify Account"
+          )}
         </button>
       </form>
     </div>
